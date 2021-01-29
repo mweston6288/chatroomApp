@@ -3,19 +3,55 @@
 	with intents to edit
 */
 
+/*
+	compile command g++ database.cpp -l sqlite3
+*/
+
 #include <sys/socket.h> // For socket functions
 #include <netinet/in.h> // For sockaddr_in
 #include <cstdlib>		// For exit() and EXIT_FAILURE
 #include <iostream>		// For cout
 #include <unistd.h>		// For read
+#include <sqlite3.h>
 
+using namespace std;
+
+int dbSetup()
+{
+	sqlite3 *DB;
+	string sql = "CREATE TABLE IF NOT EXISTS PERSON("
+					  "ID INT PRIMARY KEY     NOT NULL, "
+					  "NAME           TEXT    NOT NULL, "
+					  "SURNAME          TEXT     NOT NULL, "
+					  "AGE            INT     NOT NULL, "
+					  "ADDRESS        CHAR(50), "
+					  "SALARY         REAL );";
+	int exit = 0;
+	exit = sqlite3_open("example.db", &DB);
+	char *messaggeError;
+	exit = sqlite3_exec(DB, sql.c_str(), NULL, 0, &messaggeError);
+
+	if (exit != SQLITE_OK)
+	{
+		cerr << "Error Create Table" << endl;
+		sqlite3_free(messaggeError);
+		return 0;
+	}
+	else
+		cout << "Table created Successfully" << endl;
+	sqlite3_close(DB);
+	return (1);
+}
 int main()
 {
+	// Create the DB. Close if failed
+	if(!dbSetup())
+		return 0;
 	// Create a socket (IPv4, TCP)
 	int sockfd = socket(AF_INET, SOCK_STREAM, 0);
 	if (sockfd == -1)
 	{
-		std::cout << "Failed to create socket. errno: " << errno << std::endl;
+		cout << "Failed to create socket. errno: " << errno << endl;
 		exit(EXIT_FAILURE);
 	}
 
@@ -27,14 +63,14 @@ int main()
 									 // network byte order
 	if (bind(sockfd, (struct sockaddr *)&sockaddr, sizeof(sockaddr)) < 0)
 	{
-		std::cout << "Failed to bind to port 9999. errno: " << errno << std::endl;
+		cout << "Failed to bind to port 9999. errno: " << errno << endl;
 		exit(EXIT_FAILURE);
 	}
 
 	// Start listening. Hold at most 10 connections in the queue
 	if (listen(sockfd, 10) < 0)
 	{
-		std::cout << "Failed to listen on socket. errno: " << errno << std::endl;
+		cout << "Failed to listen on socket. errno: " << errno << endl;
 		exit(EXIT_FAILURE);
 	}
 
@@ -43,17 +79,17 @@ int main()
 	int connection = accept(sockfd, (struct sockaddr *)&sockaddr, (socklen_t *)&addrlen);
 	if (connection < 0)
 	{
-		std::cout << "Failed to grab connection. errno: " << errno << std::endl;
+		cout << "Failed to grab connection. errno: " << errno << endl;
 		exit(EXIT_FAILURE);
 	}
 
 	// Read from the connection
 	char buffer[100];
 	auto bytesRead = read(connection, buffer, 100);
-	std::cout << "The message was: " << buffer;
+	cout << "The message was: " << buffer;
 
 	// Send a message to the connection
-	std::string response = "Good talking to you\n";
+	string response = "Good talking to you\n";
 	send(connection, response.c_str(), response.size(), 0);
 
 	// Close the connections
