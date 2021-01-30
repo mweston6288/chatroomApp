@@ -4,8 +4,8 @@
 */
 
 /*
-	compile command g++ database.cpp -l sqlite3
-*/
+	compile command g++ server.cpp -l sqlite3
+*/ 
 
 #include <sys/socket.h> // For socket functions
 #include <netinet/in.h> // For sockaddr_in
@@ -13,39 +13,16 @@
 #include <iostream>		// For cout
 #include <unistd.h>		// For read
 #include <sqlite3.h>
-
+#include "classes/database.h"
 using namespace std;
 
-int dbSetup()
-{
-	sqlite3 *DB;
-	string sql = "CREATE TABLE IF NOT EXISTS PERSON("
-					  "ID INT PRIMARY KEY     NOT NULL, "
-					  "NAME           TEXT    NOT NULL, "
-					  "SURNAME          TEXT     NOT NULL, "
-					  "AGE            INT     NOT NULL, "
-					  "ADDRESS        CHAR(50), "
-					  "SALARY         REAL );";
-	int exit = 0;
-	exit = sqlite3_open("example.db", &DB);
-	char *messaggeError;
-	exit = sqlite3_exec(DB, sql.c_str(), NULL, 0, &messaggeError);
 
-	if (exit != SQLITE_OK)
-	{
-		cerr << "Error Create Table" << endl;
-		sqlite3_free(messaggeError);
-		return 0;
-	}
-	else
-		cout << "Table created Successfully" << endl;
-	sqlite3_close(DB);
-	return (1);
-}
 int main()
 {
+	Database db;
+	
 	// Create the DB. Close if failed
-	if(!dbSetup())
+	if(!db.exit)
 		return 0;
 	// Create a socket (IPv4, TCP)
 	int sockfd = socket(AF_INET, SOCK_STREAM, 0);
