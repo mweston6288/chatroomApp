@@ -20,11 +20,12 @@ using namespace std;
 int main()
 {
 	Database db;
-	
+
 	// Create the DB. Close if failed
 	if (!db.init()){
 		return 0;
 	}
+
 	// Create a socket (IPv4, TCP)
 	int sockfd = socket(AF_INET, SOCK_STREAM, 0);
 	if (sockfd == -1)
@@ -73,6 +74,5 @@ int main()
 	// Close the connections
 	close(connection);
 	close(sockfd);
-
 	db.close();
 }
