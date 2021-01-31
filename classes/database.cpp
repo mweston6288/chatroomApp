@@ -3,7 +3,8 @@
 #include <sqlite3.h>
 
 using namespace std;
-Database::Database(){
+
+int Database::init(){
 	string sql = "CREATE TABLE IF NOT EXISTS PERSON("
 				 "ID INT PRIMARY KEY     NOT NULL, "
 				 "NAME           TEXT    NOT NULL, "
@@ -11,7 +12,7 @@ Database::Database(){
 				 "AGE            INT     NOT NULL, "
 				 "ADDRESS        CHAR(50), "
 				 "SALARY         REAL );";
-	exit = 0;
+	int exit = 0;
 	exit = sqlite3_open("example.db", &DB);
 	char *messaggeError;
 	exit = sqlite3_exec(DB, sql.c_str(), NULL, 0, &messaggeError);
@@ -20,8 +21,12 @@ Database::Database(){
 	{
 		cerr << "Error Create Table" << endl;
 		sqlite3_free(messaggeError);
+		return 0;
 	}
 	else
 		cout << "Table created Successfully" << endl;
+	return 1;
+}
+void Database::close(){
 	sqlite3_close(DB);
 }

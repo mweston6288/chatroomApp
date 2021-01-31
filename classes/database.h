@@ -2,8 +2,8 @@
 
 class Database {
 	public:
-		Database();
-		int exit;
+		int init();
+		void close();
 	private:
 		sqlite3 *DB;
 };
