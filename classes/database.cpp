@@ -61,3 +61,22 @@ int Database::insert(string username, string password){
 	sqlite3_exec(DB, query.c_str(), callback, NULL, NULL);
 	return 1;
 }
+int Database::remove(int rowid)
+{
+	hash<string> passHash;
+	string query = "SELECT * FROM USERS;";
+	string sql = "DELETE FROM USERS WHERE rowid = "+to_string(rowid)+";";
+
+	char *messaggeError;
+
+	int exit = sqlite3_exec(DB, sql.c_str(), NULL, 0, &messaggeError);
+	if (exit != SQLITE_OK)
+	{
+		std::cerr << "Error Delete " << sql << std::endl;
+		sqlite3_free(messaggeError);
+	}
+	else
+		std::cout << "Deleted Successfully!" << std::endl;
+	sqlite3_exec(DB, query.c_str(), callback, NULL, NULL);
+	return 1;
+}

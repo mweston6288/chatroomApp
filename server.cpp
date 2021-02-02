@@ -25,6 +25,9 @@ int main()
 	if (!db.init()){
 		return 0;
 	}
+	db.insert("User", "test");
+	db.insert("User2", "test");
+	db.remove(1);
 
 	// Create a socket (IPv4, TCP)
 	int sockfd = socket(AF_INET, SOCK_STREAM, 0);

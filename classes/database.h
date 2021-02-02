@@ -6,6 +6,7 @@ class Database {
 		int init();
 		void close();
 		int insert(string username, string password);
+		int remove(int rowid);
 	private:
 		sqlite3 *DB;
 };
