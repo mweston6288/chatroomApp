@@ -13,6 +13,8 @@
 #include <iostream>		// For cout
 #include <unistd.h>		// For read
 #include <sqlite3.h>
+#include <signal.h>
+#include <string.h>
 #include "classes/database.h"
 using namespace std;
 
@@ -58,7 +60,9 @@ int main()
 
 	// Grab a connection from the queue
 	auto addrlen = sizeof(sockaddr);
+	CONNECT:
 	int connection = accept(sockfd, (struct sockaddr *)&sockaddr, (socklen_t *)&addrlen);
+	signal(SIGPIPE, SIG_IGN);
 	if (connection < 0)
 	{
 		cout << "Failed to grab connection. errno: " << errno << endl;
@@ -68,14 +72,24 @@ int main()
 	// Read from the connection
 	char buffer[100];
 	int bytesRead;
-	
-	while ((bytesRead = recv(connection, buffer, 100, 0))>=0){
-	cout << "The message was: " << buffer;
 
-	// Send a message to the connection
-	string response = "Good talking to you\n";
-	send(connection, response.c_str(), response.size(), 0);
+	while ((bytesRead = recv(connection, buffer, 100, 0))>0){
+		cout << "The message was: " << buffer<<endl;
+		fflush(stdout);
+		// Send a message to the connection
+		string response = "Good talking to you\n";
+
+		send(connection, response.c_str(), response.size(), 0);
+		if (!strcmp(buffer, "DC")){
+			// Close the connections
+			close(connection);
+			close(sockfd);
+			db.close();
+			return 0;
+		}
+
 	}
+	goto CONNECT;
 	// Close the connections
 	close(connection);
 	close(sockfd);
