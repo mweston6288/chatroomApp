@@ -80,14 +80,6 @@ int main()
 		string response = "Good talking to you\n";
 
 		send(connection, response.c_str(), response.size(), 0);
-		if (!strcmp(buffer, "DC")){
-			// Close the connections
-			close(connection);
-			close(sockfd);
-			db.close();
-			return 0;
-		}
-
 	}
 	goto CONNECT;
 	// Close the connections
