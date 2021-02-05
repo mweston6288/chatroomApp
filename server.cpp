@@ -67,13 +67,15 @@ int main()
 
 	// Read from the connection
 	char buffer[100];
-	auto bytesRead = read(connection, buffer, 100);
+	int bytesRead;
+	
+	while ((bytesRead = recv(connection, buffer, 100, 0))>=0){
 	cout << "The message was: " << buffer;
 
 	// Send a message to the connection
 	string response = "Good talking to you\n";
 	send(connection, response.c_str(), response.size(), 0);
-
+	}
 	// Close the connections
 	close(connection);
 	close(sockfd);

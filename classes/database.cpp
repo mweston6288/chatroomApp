@@ -58,7 +58,7 @@ int Database::insert(string username, string password){
 	}
 	else
 		std::cout << "Records created Successfully!" << std::endl;
-	sqlite3_exec(DB, query.c_str(), callback, NULL, NULL);
+	//sqlite3_exec(DB, query.c_str(), callback, NULL, NULL);
 	return 1;
 }
 int Database::remove(int rowid)
@@ -77,6 +77,6 @@ int Database::remove(int rowid)
 	}
 	else
 		std::cout << "Deleted Successfully!" << std::endl;
-	sqlite3_exec(DB, query.c_str(), callback, NULL, NULL);
+	//sqlite3_exec(DB, query.c_str(), callback, NULL, NULL);
 	return 1;
 }
