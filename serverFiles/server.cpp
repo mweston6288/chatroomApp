@@ -15,7 +15,7 @@
 #include <sqlite3.h>
 #include <signal.h>
 #include <string.h>
-#include "classes/database.h"
+#include "database.h"
 using namespace std;
 
 
