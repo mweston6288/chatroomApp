@@ -15,6 +15,9 @@
 #include <sqlite3.h>
 #include <signal.h>
 #include <string.h>
+#include <sys/types.h>
+#include <arpa/inet.h> //close
+
 #include "database.h"
 using namespace std;
 
@@ -22,7 +25,6 @@ using namespace std;
 int main()
 {
 	Database db;
-
 	// Create the DB. Close if failed
 	if (!db.init()){
 		return 0;
@@ -31,59 +33,167 @@ int main()
 	db.insert("User2", "test");
 	db.remove(1);
 
-	// Create a socket (IPv4, TCP)
-	int sockfd = socket(AF_INET, SOCK_STREAM, 0);
-	if (sockfd == -1)
+	int opt = 1;
+	int master_socket, addrlen, new_socket, client_socket[30],
+		max_clients = 30, activity, i, valread, sd;
+	int maxSocket;
+	struct sockaddr_in address;
+
+	char buffer[1025]; //data buffer of 1K
+
+	//set of socket descriptors
+	fd_set readfds;
+
+	//a message
+	string message = "ECHO Daemon v1.0 \r\n";
+
+	//initialise all client_socket[] to 0 so not checked
+	for (i = 0; i < max_clients; i++)
 	{
-		cout << "Failed to create socket. errno: " << errno << endl;
+		client_socket[i] = 0;
+	}
+
+	//create a master socket
+	if ((master_socket = socket(AF_INET, SOCK_STREAM, 0)) == 0)
+	{
+		perror("socket failed");
 		exit(EXIT_FAILURE);
 	}
 
-	// Listen to port 9999 on any address
-	sockaddr_in sockaddr;
-	sockaddr.sin_family = AF_INET;
-	sockaddr.sin_addr.s_addr = INADDR_ANY;
-	sockaddr.sin_port = htons(9999); // htons is necessary to convert a number to
-									 // network byte order
-	if (bind(sockfd, (struct sockaddr *)&sockaddr, sizeof(sockaddr)) < 0)
+	//set master socket to allow multiple connections ,
+	//this is just a good habit, it will work without this
+	if (setsockopt(master_socket, SOL_SOCKET, SO_REUSEADDR, (char *)&opt, sizeof(opt)) < 0)
 	{
-		cout << "Failed to bind to port 9999. errno: " << errno << endl;
+		perror("setsockopt");
 		exit(EXIT_FAILURE);
 	}
 
-	// Start listening. Hold at most 10 connections in the queue
-	if (listen(sockfd, 10) < 0)
+	//type of socket created
+	address.sin_family = AF_INET;
+	address.sin_addr.s_addr = INADDR_ANY;
+	address.sin_port = htons(9999);
+
+	//bind the socket to localhost port 8888
+	if (bind(master_socket, (struct sockaddr *)&address, sizeof(address)) < 0)
 	{
-		cout << "Failed to listen on socket. errno: " << errno << endl;
+		perror("bind failed");
+		exit(EXIT_FAILURE);
+	}
+	printf("Listener on port %d \n", 9999);
+
+	//try to specify maximum of 3 pending connections for the master socket
+	if (listen(master_socket, 3) < 0)
+	{
+		perror("listen");
 		exit(EXIT_FAILURE);
 	}
 
-	// Grab a connection from the queue
-	auto addrlen = sizeof(sockaddr);
-	CONNECT:
-	int connection = accept(sockfd, (struct sockaddr *)&sockaddr, (socklen_t *)&addrlen);
+	//accept the incoming connection
+	addrlen = sizeof(address);
 	signal(SIGPIPE, SIG_IGN);
-	if (connection < 0)
+
+	puts("Waiting for connections ...");
+
+	while (1)
 	{
-		cout << "Failed to grab connection. errno: " << errno << endl;
-		exit(EXIT_FAILURE);
+		//clear the socket set
+		FD_ZERO(&readfds);
+
+		//add master socket to set
+		FD_SET(master_socket, &readfds);
+		maxSocket = master_socket;
+
+		//add child sockets to set
+		for (i = 0; i < max_clients; i++)
+		{
+			//socket descriptor
+			sd = client_socket[i];
+
+			//if valid socket descriptor then add to read list
+			if (sd > 0)
+				FD_SET(sd, &readfds);
+
+			//highest file descriptor number, need it for the select function
+			if (sd > maxSocket)
+				maxSocket = sd;
+		}
+
+		//wait for an activity on one of the sockets , timeout is NULL ,
+		//so wait indefinitely
+		activity = select(maxSocket + 1, &readfds, NULL, NULL, NULL);
+
+		if ((activity < 0) && (errno != EINTR))
+		{
+			printf("select error");
+		}
+
+		//If something happened on the master socket ,
+		//then its an incoming connection
+		if (FD_ISSET(master_socket, &readfds))
+		{
+			if ((new_socket = accept(master_socket,
+									 (struct sockaddr *)&address, (socklen_t *)&addrlen)) < 0)
+			{
+				perror("accept");
+				exit(EXIT_FAILURE);
+			}
+
+			//inform user of socket number - used in send and receive commands
+			printf("New connection , socket fd is %d , ip is : %s , port : %d\n ", new_socket, inet_ntoa(address.sin_addr), ntohs(address.sin_port));
+
+			//send new connection greeting message
+			if (send(new_socket, message.c_str(), message.size(), 0) != message.size())
+			{
+				perror("send");
+			}
+
+			puts("Welcome message sent successfully");
+
+			//add new socket to array of sockets
+			for (i = 0; i < max_clients; i++)
+			{
+				//if position is empty
+				if (client_socket[i] == 0)
+				{
+					client_socket[i] = new_socket;
+					printf("Adding to list of sockets as %d\n", i);
+
+					break;
+				}
+			}
+		}
+
+		//else its some IO operation on some other socket
+		for (i = 0; i < max_clients; i++)
+		{
+			sd = client_socket[i];
+
+			if (FD_ISSET(sd, &readfds))
+			{
+				//Check if it was for closing , and also read the
+				//incoming message
+				if ((valread = read(sd, buffer, 1024)) == 0)
+				{
+					//Somebody disconnected , get his details and print
+					getpeername(sd, (struct sockaddr *)&address,
+								(socklen_t *)&addrlen);
+					printf("Host disconnected , ip %s , port %d \n",
+						   inet_ntoa(address.sin_addr), ntohs(address.sin_port));
+
+					//Close the socket and mark as 0 in list for reuse
+					close(sd);
+					client_socket[i] = 0;
+				}
+
+				//Echo back the message that came in
+				else
+				{
+					//set the string terminating NULL byte on the end
+					//of the data read
+					buffer[valread] = '\0';
+					send(sd, buffer, strlen(buffer), 0);
+				}
+			}
+		}
 	}
-
-	// Read from the connection
-	char buffer[100];
-	int bytesRead;
-
-	while ((bytesRead = recv(connection, buffer, 100, 0))>0){
-		cout << "The message was: " << buffer<<endl;
-		fflush(stdout);
-		// Send a message to the connection
-		string response = "Good talking to you\n";
-
-		send(connection, response.c_str(), response.size(), 0);
-	}
-	goto CONNECT;
-	// Close the connections
-	close(connection);
-	close(sockfd);
-	db.close();
 }

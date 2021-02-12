@@ -49,17 +49,16 @@ int main(int argc, char const *argv[])
 	fgets(clientMessage, 1024, stdin);
 
 	t.setInterval([&]() {
-			cout <<"Here"<<endl;
-			strcpy(clientMessage, strtok(clientMessage, "\n"));
-			send(sock, clientMessage, strlen(clientMessage) + 1, 0);
-			recv(sock, serverMessage, 1024, 0);
-			if (!strcmp(serverMessage, "DC"))
-			{
-				printf("User input ends; end the client program\n");
-				t.stop();
-				return 0;
-			}
-			printf("Answer from server: %s\n", serverMessage); 
+		strcpy(clientMessage, strtok(clientMessage, "\n"));
+		send(sock, clientMessage, strlen(clientMessage) + 1, 0);
+		recv(sock, serverMessage, 1024, 0);
+		if (!strcmp(serverMessage, "DC"))
+		{
+			printf("User input ends; end the client program\n");
+			t.stop();
+			return 0;
+		}
+		printf("Answer from server: %s\n", serverMessage); 
 	}, 2000);
 	while(1);
 }
