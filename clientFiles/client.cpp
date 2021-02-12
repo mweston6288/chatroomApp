@@ -15,7 +15,7 @@ int main(int argc, char const *argv[])
 {
 	int sock;
 	struct sockaddr_in server;
-	char clientMessage[1024];
+	string clientMessage;
 	char serverMessage[1024];
 
 	char *IPBuffer;
@@ -46,11 +46,11 @@ int main(int argc, char const *argv[])
 		return -1;
 	}
 	Timer t = Timer();
-	fgets(clientMessage, 1024, stdin);
-
+	
+	clientMessage = "Insert user test";
 	t.setInterval([&]() {
-		strcpy(clientMessage, strtok(clientMessage, "\n"));
-		send(sock, clientMessage, strlen(clientMessage) + 1, 0);
+		send(sock, clientMessage.c_str(), clientMessage.length() + 1, 0);
+		clientMessage+="c";
 		recv(sock, serverMessage, 1024, 0);
 		if (!strcmp(serverMessage, "DC"))
 		{

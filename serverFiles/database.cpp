@@ -1,7 +1,7 @@
 #include "database.h"
 #include <iostream>
 #include <sqlite3.h>
-
+#include <string.h>
 using namespace std;
 
 int Database::init(){
@@ -58,7 +58,7 @@ int Database::insert(string username, string password){
 	}
 	else
 		std::cout << "Records created Successfully!" << std::endl;
-	//sqlite3_exec(DB, query.c_str(), callback, NULL, NULL);
+	sqlite3_exec(DB, query.c_str(), callback, NULL, NULL);
 	return 1;
 }
 int Database::remove(int rowid)
@@ -79,4 +79,12 @@ int Database::remove(int rowid)
 		std::cout << "Deleted Successfully!" << std::endl;
 	//sqlite3_exec(DB, query.c_str(), callback, NULL, NULL);
 	return 1;
+}
+void Database::parse(char s[]){
+	char *x= strtok(s, " ");
+	if (!strcmp(x, "Insert")){
+		char *username = strtok(NULL, " ");
+		char *password = strtok(NULL, " ");
+		insert(username, password);
+	}
 }
