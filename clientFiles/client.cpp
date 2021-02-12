@@ -5,6 +5,9 @@
 #include <unistd.h>
 #include <string.h>
 #include <netdb.h>
+#include <iostream>
+#include "timercpp/timercpp.h"
+using namespace std;
 #define PORT 9999
 #define LOCAL "127.0.0.1"
 
@@ -42,22 +45,21 @@ int main(int argc, char const *argv[])
 		printf("\nConnection Failed \n");
 		return -1;
 	}
+	Timer t = Timer();
+	fgets(clientMessage, 1024, stdin);
 
-	while (1)
-	{
-		fgets(clientMessage, 1024, stdin);
-		if (!strcmp(clientMessage, "\n"))
-			continue;
-		strcpy(clientMessage, strtok(clientMessage, "\n"));
-		send(sock, clientMessage, strlen(clientMessage) + 1, 0);
-		recv(sock, serverMessage, 1024, 0);
-		if (!strcmp(serverMessage, "DC"))
-		{
-			printf("User input ends; end the client program\n");
-			break;
-		}
-		printf("Answer from server: %s\n", serverMessage);
-	}
-
-	return 0;
+	t.setInterval([&]() {
+			cout <<"Here"<<endl;
+			strcpy(clientMessage, strtok(clientMessage, "\n"));
+			send(sock, clientMessage, strlen(clientMessage) + 1, 0);
+			recv(sock, serverMessage, 1024, 0);
+			if (!strcmp(serverMessage, "DC"))
+			{
+				printf("User input ends; end the client program\n");
+				t.stop();
+				return 0;
+			}
+			printf("Answer from server: %s\n", serverMessage); 
+	}, 2000);
+	while(1);
 }
