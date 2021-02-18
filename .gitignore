@@ -1,4 +1,2 @@
-/exampleCode
-client
-server
-chatApp.db
+/legacy
+/node_modules

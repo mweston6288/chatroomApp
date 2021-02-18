@@ -1,0 +1,26 @@
+{
+  "name": "chatroomapp",
+  "version": "1.0.0",
+  "description": "Makes a chatroom app",
+  "main": "server.js",
+  "dependencies": {
+    "compression": "^1.7.4",
+    "express": "^4.17.1",
+    "express-session": "^1.17.1"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mweston6288/chatroomApp.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/mweston6288/chatroomApp/issues"
+  },
+  "homepage": "https://github.com/mweston6288/chatroomApp#readme"
+}
