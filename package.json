@@ -4,9 +4,19 @@
   "description": "Makes a chatroom app",
   "main": "server.js",
   "dependencies": {
+    "bcrypt": "^5.0.0",
     "compression": "^1.7.4",
-    "express": "^4.17.1",
-    "express-session": "^1.17.1"
+    "express-session": "^1.17.1",
+    "express.js": "^1.0.0",
+    "fs": "0.0.1-security",
+    "mysql": "^2.18.1",
+    "mysql2": "^2.2.5",
+    "passport": "^0.4.1",
+    "passport-local": "^1.0.0",
+    "path": "^0.12.7",
+    "sequelize": "^6.3.5",
+    "sequelize-cli": "^6.2.0",
+    "sqlite3": "^5.0.0"
   },
   "devDependencies": {},
   "scripts": {
