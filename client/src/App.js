@@ -7,18 +7,17 @@ import { UserProvider } from "./utils/UserContext";
 import { LoginProvider } from "./utils/LoginContext";
 function App() {
   return (
-    <div>
+    <>
       <UserProvider>
         <LoginProvider>
           <Container>
             <Row>
               <Col sm={3}>
                 Hello World
-          </Col>
+              </Col>
               <Col sm={9}>
                 Hello World
-
-          </Col>
+              </Col>
             </Row>
           </Container>
           <LoginWindow />
@@ -27,7 +26,7 @@ function App() {
       </UserProvider>
       
      
-    </div>
+    </>
   );
 }
 

@@ -2,7 +2,7 @@ const express = require("express");
 const session = require("express-session");
 const compression = require("compression");
 const passport = require("./backend/config/passport");
-const PORT = process.env.PORT || 8080; // change the number if needed
+const PORT = process.env.PORT || 8081; // change the number if needed
 const app = express();
 
 
