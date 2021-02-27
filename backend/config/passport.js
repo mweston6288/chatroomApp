@@ -2,11 +2,14 @@ const passport = require("passport");
 const LocalStrategy = require("passport-local").Strategy;
 
 const db = require("../models");
-
+const jssha = require("jssha");
 // Telling passport we want to use a Local Strategy. In other words, we want login with a username and password
 passport.use(new LocalStrategy(
     function(username, password, done) {
         // When a user tries to sign in this code runs
+        const sha = new jssha("SHA-512", "TEXT");
+        sha.update(username);
+        username = sha.getHash("HEX");
         db.Users.findOne({
             where: {
                 username: username
