@@ -29,9 +29,6 @@ function LoginForm(props){
 						Login
 					</Button>
 				</Col>
-				<Col>
-					<Button variant="link" onClick={props.handleClose}>Continue without logging in</Button>
-				</Col>
 			</Form.Group>
 		</Form>
 	);

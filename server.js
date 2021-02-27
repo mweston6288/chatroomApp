@@ -24,8 +24,8 @@ require("./backend/routes/userApi")(app);
 
 
 // Start our server so that it can begin listening to client requests.
-//db.sequelize.sync().then(() => {
+db.sequelize.sync().then(() => {
 	app.listen(PORT, () => {
 		console.log("App listening on Port " + PORT);
 	});
-//});
+});

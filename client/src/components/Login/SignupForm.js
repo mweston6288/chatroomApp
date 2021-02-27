@@ -35,9 +35,7 @@ function SignupForm(props) {
 						Sign up
 					</Button>
 				</Col>
-				<Col>
-					<Button variant="link" onClick={props.handleClose}>Continue without making an account</Button>
-				</Col>
+
 			</Form.Group>
 		</Form>
 	);

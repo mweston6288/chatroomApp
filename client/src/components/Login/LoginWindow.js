@@ -123,7 +123,7 @@ function LoginWindow(){
 			<Modal.Header closeButton>
 				{
 					login.loginPage ?
-						<Modal.Title>You must log in to save or view notes</Modal.Title>
+						<Modal.Title>Login</Modal.Title>
 						:
 						<Modal.Title>Create an account</Modal.Title>
 				}
