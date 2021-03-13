@@ -120,7 +120,7 @@ function LoginWindow(){
 		// Otherwise, create the SignupForm and pass the signup
 		// methods to it 
 		<Modal show={login.show} onHide={handleClose} backdrop="static" keyboard={false}>
-			<Modal.Header closeButton>
+			<Modal.Header>
 				{
 					login.loginPage ?
 						<Modal.Title>Login</Modal.Title>
