@@ -3,6 +3,7 @@ import InputGroup from "react-bootstrap/InputGroup";
 import FormControl from "react-bootstrap/FormControl";
 import Button from "react-bootstrap/Button";
 import { useSearchContext } from "../../utils/SearchContext";
+import axios from "axios";
 
 function SearchBar(){
 	
@@ -10,13 +11,15 @@ function SearchBar(){
 
 	const updateField= (e)=>{
 		setSearch({type: "updateField", field: e.target.value})
-		console.log(search);
 	}
 	const handleClick=(e)=>{
+		axios.get("/api/user/" + search.field).then((response)=>{
+			if (response.error){
+				console.log("User does not exist");
+			}
+		})
+
 		setSearch({ type: "resetState"})
-		console.log(search);
-
-
 	}
 	return(
 		<>
