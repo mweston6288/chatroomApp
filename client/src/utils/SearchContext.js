@@ -15,6 +15,10 @@ const reducer = (state, action) => {
 		return ({ ...state, field: ""});
 
 	}
+	case "addContact":{
+		state.users.push(action.user);
+		return ({...state})
+	}
 	default:{
 		return({...state});
 	}
@@ -24,7 +28,8 @@ const reducer = (state, action) => {
 // default state of the context
 const SearchProvider = ({ value = [], ...props }) => {
 	const [state, dispatch] = useReducer(reducer, {
-		field: ""
+		field: "",
+		users: []
 	});
 	return <Provider value={[state, dispatch]}{...props} />;
 };

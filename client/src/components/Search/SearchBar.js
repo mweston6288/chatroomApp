@@ -14,11 +14,13 @@ function SearchBar(){
 	}
 	const handleClick=(e)=>{
 		axios.get("/api/user/" + search.field).then((response)=>{
-			if (response.error){
+			if (response.data.error){
 				console.log("User does not exist");
 			}
-		})
+			else
+				setSearch({ type: "addContact", user: response.data.username })
 
+		})
 		setSearch({ type: "resetState"})
 	}
 	return(
