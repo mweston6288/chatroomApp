@@ -49,4 +49,27 @@ module.exports = function (app) {
 			res.json(response);
 		})
 	})
+	// Login using the passport.authenticate middleware with our local strategy.
+	// If the user has valid login credentials, send back the user details.
+	// Otherwise the user will be sent an error
+	app.get("/api/user/:user", function (req, res) {
+		// return only username
+		db.Users.findOne({
+			where: {
+				username: req.params.user
+			}
+		}).then(function (results) {
+			let response = {};
+			if (results == null){
+				response = {
+					error: "Name does not exist"
+				}
+			}
+			else
+				response = {
+					username: results.dataValues.username
+				}
+			res.json(response);
+		});
+	})
 }

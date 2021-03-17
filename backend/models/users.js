@@ -4,7 +4,6 @@
  * Each user can have 0 or more Notes.
  */
 const bcrypt = require("bcrypt");
-const jssha = require("jssha");
 module.exports = function (sequelize, DataTypes) {
 
 	const Users = sequelize.define("Users",{
@@ -18,11 +17,6 @@ module.exports = function (sequelize, DataTypes) {
 			type: DataTypes.STRING,
 			allowNull: false,
 			unique: true,
-			set(value){
-				const sha = new jssha("SHA-512", "TEXT");
-				sha.update(value)
-				this.setDataValue('username', sha.getHash("HEX"))
-			}
 		},
 		// password is encrypted before insertion
 		password: {
