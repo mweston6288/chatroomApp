@@ -3,20 +3,26 @@
  */
 const db = require("../models");
 const passport = require("../config/passport");
-
+const forge = require("node-forge");
 module.exports = function (app) {
 	// create a new user account
 	// If successful, return the user id and name
 	// If username already exists, return the error instead
 	app.post("/api/newUser", function (req, res) {
+		const rsa = forge.rsa;
+		const keypair = rsa.generateKeyPair({ bits: 2048, e: 0x10001 });
 		db.Users.create({
 			username: req.body.username,
 			password: req.body.password,
+			publicKey: keypair.publicKey
 		}).then(function (results) {
 			// return an object containing only the username and userId.
+			console.log(keypair.publicKey.e);
+			
 			const response = {
 				userId: results.dataValues.userId, 
-				username: results.dataValues.username
+				username: results.dataValues.username,
+				key: keypair.privateKey
 			};
 			res.json(response);
 			res.end();
@@ -46,6 +52,20 @@ module.exports = function (app) {
 				userId:req.body.userId
 			}
 		}).then((response)=>{
+			res.json(response);
+		})
+	})
+	// Update the user's password
+	// Authenticate with Passport prior to update
+	// If authentication fails, passport returns an error without update
+	app.put("/api/online", function (req, res) {
+		db.Users.update({
+			online: true
+		}, {
+			where: {
+				userId: req.body.userId
+			}
+		}).then((response) => {
 			res.json(response);
 		})
 	})

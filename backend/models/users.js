@@ -25,6 +25,12 @@ module.exports = function (sequelize, DataTypes) {
 				const hash = bcrypt.hashSync(value, 10);
 				this.setDataValue('password', hash);
 			}
+		},
+		publicKey: {
+			type: DataTypes.JSON
+		},
+		online:{
+			type: DataTypes.BOOLEAN
 		}
 	})
 

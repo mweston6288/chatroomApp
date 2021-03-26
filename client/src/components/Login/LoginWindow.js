@@ -101,6 +101,7 @@ function LoginWindow(){
 		axios.post("/api/newUser", login).then((response)=>{
 			if(!response.data.errors){
 				setUserContext({type: "login", data: response.data});
+				localStorage.setItem("UserInfo", JSON.stringify(response.data))
 				setLogin({ type: "close" });
 			}else{
 				setTimeout(closeAlert, 5000);
