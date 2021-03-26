@@ -14,7 +14,7 @@ module.exports = function (app) {
 		db.Users.create({
 			username: req.body.username,
 			password: req.body.password,
-			publicKey: keypair.publicKey
+			publicKey: keypair.publicKey	
 		}).then(function (results) {
 			// return an object containing only the username and userId.
 			console.log(keypair.publicKey.e);
@@ -59,8 +59,10 @@ module.exports = function (app) {
 	// Authenticate with Passport prior to update
 	// If authentication fails, passport returns an error without update
 	app.put("/api/online", function (req, res) {
+		console.log("Entered method")
+		console.log(req.body.time)
 		db.Users.update({
-			online: true
+			online: req.body.time
 		}, {
 			where: {
 				userId: req.body.userId

@@ -17,17 +17,17 @@ function App() {
         <LoginProvider>
           <SearchProvider>
             <MessageProvider>
-          <Container>
-            <Row>
-              <Col sm={3}>
-                <SearchBar/>
-              </Col>
-              <Col sm={9}>
-                <MessageField/>
-              </Col>
-            </Row>
-          </Container>
-          <LoginWindow />
+              <Container>
+                <Row>
+                  <Col sm={3}>
+                    <SearchBar/>
+                  </Col>
+                  <Col sm={9}>
+                    <MessageField/>
+                  </Col>
+                </Row>
+              </Container>
+              <LoginWindow />
             </MessageProvider>
           </SearchProvider>
         </LoginProvider>
