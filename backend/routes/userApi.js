@@ -16,9 +16,7 @@ module.exports = function (app) {
 			password: req.body.password,
 			publicKey: keypair.publicKey	
 		}).then(function (results) {
-			// return an object containing only the username and userId.
-			console.log(keypair.publicKey.e);
-			
+			// return an object containing only the username and userId.			
 			const response = {
 				userId: results.dataValues.userId, 
 				username: results.dataValues.username,
@@ -59,10 +57,8 @@ module.exports = function (app) {
 	// Authenticate with Passport prior to update
 	// If authentication fails, passport returns an error without update
 	app.put("/api/online", function (req, res) {
-		console.log("Entered method")
-		console.log(req.body.time)
 		db.Users.update({
-			online: req.body.time
+			online: Date.now()
 		}, {
 			where: {
 				userId: req.body.userId
@@ -89,9 +85,18 @@ module.exports = function (app) {
 			}
 			else
 				response = {
-					username: results.dataValues.username
+					userId: results.dataValues.userId,
+					username: results.dataValues.username,
+					online: results.dataValues.online
 				}
 			res.json(response);
 		});
+	}),
+	app.get("/api/contacts", function(req,res){
+		db.Users.findAll({
+			where:{
+				[app.or]: []
+			}
+		})
 	})
 }

@@ -29,7 +29,6 @@ function LoginWindow(){
 			setInterval(()=>{
 				axios.put("/api/online", {
 					userId: userContext.userId,
-					time: Date.now() + 20000
 				})
 			}, 5000)
 		}

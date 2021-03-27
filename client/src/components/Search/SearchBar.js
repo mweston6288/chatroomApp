@@ -3,11 +3,14 @@ import InputGroup from "react-bootstrap/InputGroup";
 import FormControl from "react-bootstrap/FormControl";
 import Button from "react-bootstrap/Button";
 import { useSearchContext } from "../../utils/SearchContext";
+import { useContactListContext } from "../../utils/ContactListContext";
+
 import axios from "axios";
 
 function SearchBar(){
 	
 	const [search, setSearch] = useSearchContext();
+	const [contactList, setContactList] = useContactListContext();
 
 	const updateField= (e)=>{
 		setSearch({type: "updateField", field: e.target.value})
@@ -18,8 +21,8 @@ function SearchBar(){
 				console.log("User does not exist");
 			}
 			else
-				setSearch({ type: "addContact", user: response.data.username })
-
+				setContactList({ type: "addContact", user: response.data })
+				console.log(contactList);
 		})
 		setSearch({ type: "resetState"})
 	}
