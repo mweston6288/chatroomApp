@@ -12,7 +12,7 @@ function ContactList(){
 		if (loggedIn) {
 			setInterval(() => {
 				console.log(Users.userIds)
-				axios.get("/api/contacts",{
+				axios.post("/api/contacts",{
 					users: Users.userIds
 				}).then((response)=>{
 					console.log(response)

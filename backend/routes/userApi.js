@@ -2,6 +2,7 @@
  * API routes related to users
  */
 const db = require("../models");
+const {Op} = require("sequelize");
 const passport = require("../config/passport");
 const forge = require("node-forge");
 module.exports = function (app) {
@@ -73,6 +74,8 @@ module.exports = function (app) {
 	app.get("/api/user/:user", function (req, res) {
 		// return only username
 		db.Users.findOne({
+			attributes: ["userId", "username", "online"]
+		},{ 
 			where: {
 				username: req.params.user
 			}
@@ -84,24 +87,26 @@ module.exports = function (app) {
 				}
 			}
 			else
-				response = {
-					userId: results.dataValues.userId,
-					username: results.dataValues.username,
-					online: results.dataValues.online
-				}
+				response = results.dataValues
 			res.json(response);
 		});
 	}),
-	app.get("/api/contacts", function(req,res){
-		console.log(req)
+	app.post("/api/contacts", function(req,res){
 		db.Users.findAll({
+			attributes:["userId", "username", "online"]
+		},{
 			where:{
 				userId:{
-					[app.or]: [req.body.users]
+					[Op.or]: req.body.users
 				}
 			}
 		}).then((response)=>{
-			res.json(response);
+			let results = []
+			response.forEach(element => {
+				results.push(element.dataValues)
+			});
+			console.log(results)
+			res.json(results);
 		})
 	})
 }
