@@ -9,6 +9,8 @@ const reducer = (state, action) => {
 	switch (action.type) {
 		case "addContact": {
 			state.Users.push(action.user);
+			state.userIds.push(action.userId);
+
 			return ({ ...state });
 		}
 		case "updateContacts":{
@@ -23,7 +25,8 @@ const reducer = (state, action) => {
 // default state of the context
 const ContactListProvider = ({ value = [], ...props }) => {
 	const [state, dispatch] = useReducer(reducer, {
-		Users: []
+		Users: [],
+		userIds:[]
 	});
 	return <Provider value={[state, dispatch]}{...props} />;
 };

@@ -93,10 +93,15 @@ module.exports = function (app) {
 		});
 	}),
 	app.get("/api/contacts", function(req,res){
+		console.log(req)
 		db.Users.findAll({
 			where:{
-				[app.or]: []
+				userId:{
+					[app.or]: [req.body.users]
+				}
 			}
+		}).then((response)=>{
+			res.json(response);
 		})
 	})
 }

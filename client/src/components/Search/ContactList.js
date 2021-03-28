@@ -1,19 +1,29 @@
-import React from "react";
+import React, {useEffect} from "react";
 import Card from "react-bootstrap/Card"
-import { useSearchContext } from "../../utils/SearchContext";
+import { useContactListContext } from "../../utils/ContactListContext";
+import { useUserContext } from "../../utils/UserContext";
 import axios from "axios";
 
 function ContactList(){
-	const [Users] = useSearchContext();
+	const [Users] = useContactListContext();
+	const [{loggedIn}] = useUserContext();
 
-	setInterval(()=>{
-		console.log("Here");
-	}, 5000)
-
+	useEffect(() => {
+		if (loggedIn) {
+			setInterval(() => {
+				console.log(Users.userIds)
+				axios.get("/api/contacts",{
+					users: Users.userIds
+				}).then((response)=>{
+					console.log(response)
+				})
+			}, 5000)
+		}
+	})
 	return(
-		<>
+		<div>
 		{
-			Users.users.map((user)=>(
+			Users.Users.map((user)=>(
 				<Card>
 					<Card.Body>
 						
@@ -21,7 +31,7 @@ function ContactList(){
 				</Card>
 			))
 		}
-		</>
+		</div>
 	)
 }
 export default ContactList

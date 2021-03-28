@@ -21,7 +21,7 @@ function SearchBar(){
 				console.log("User does not exist");
 			}
 			else
-				setContactList({ type: "addContact", user: response.data })
+				setContactList({ type: "addContact", user: response.data, userId: response.data.userId})
 				console.log(contactList);
 		})
 		setSearch({ type: "resetState"})
