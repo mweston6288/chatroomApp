@@ -5,7 +5,7 @@ import { useUserContext } from "../../utils/UserContext";
 import axios from "axios";
 
 function ContactList(){
-	const [Users] = useContactListContext();
+	const [Users, setUsers] = useContactListContext();
 	const [{loggedIn}] = useUserContext();
 
 	useEffect(() => {
@@ -15,7 +15,7 @@ function ContactList(){
 					axios.post("/api/contacts",{
 						users: Users.userIds
 					}).then((response)=>{
-						console.log(response)
+						setUsers({type: "updateContacts", users: response.data})
 					})
 				}
 			}, 5000)
@@ -31,7 +31,7 @@ function ContactList(){
 					</Card.Body>
 					<Card.Subtitle>
 						{
-							user.online + 20 < Date.now() ? 
+							user.online + 20000 < Date.now() ? 
 							<p>Offline</p> 
 							:
 							<p>Online</p>

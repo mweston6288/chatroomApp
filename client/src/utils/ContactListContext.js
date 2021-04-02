@@ -14,7 +14,7 @@ const reducer = (state, action) => {
 			return ({ ...state });
 		}
 		case "updateContacts":{
-			return ({...state})
+			return ({...state, Users: action.users})
 		}
 		default: {
 			return ({ ...state });
