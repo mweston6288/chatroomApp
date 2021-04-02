@@ -11,27 +11,36 @@ function ContactList(){
 	useEffect(() => {
 		if (loggedIn) {
 			setInterval(() => {
-				console.log(Users.userIds)
-				axios.post("/api/contacts",{
-					users: Users.userIds
-				}).then((response)=>{
-					console.log(response)
-				})
+				if (Users.userIds.length > 0){
+					axios.post("/api/contacts",{
+						users: Users.userIds
+					}).then((response)=>{
+						console.log(response)
+					})
+				}
 			}, 5000)
 		}
 	})
 	return(
-		<div>
+		<>
 		{
 			Users.Users.map((user)=>(
 				<Card>
 					<Card.Body>
-						
+						{user.username}
 					</Card.Body>
+					<Card.Subtitle>
+						{
+							user.online + 20 < Date.now() ? 
+							<p>Offline</p> 
+							:
+							<p>Online</p>
+						}
+					</Card.Subtitle>
 				</Card>
 			))
 		}
-		</div>
+		</>
 	)
 }
 export default ContactList

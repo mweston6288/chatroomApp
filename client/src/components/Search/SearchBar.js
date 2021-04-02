@@ -22,7 +22,6 @@ function SearchBar(){
 			}
 			else
 				setContactList({ type: "addContact", user: response.data, userId: response.data.userId})
-				console.log(contactList);
 		})
 		setSearch({ type: "resetState"})
 	}

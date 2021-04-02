@@ -54,9 +54,11 @@ module.exports = function (app) {
 			res.json(response);
 		})
 	})
-	// Update the user's password
-	// Authenticate with Passport prior to update
-	// If authentication fails, passport returns an error without update
+	// Update user's online status
+	// Online is equal to A BigInteger value given by Date.now()
+	// representing the last time the user pinged the server.
+	// If the user's last ping was more than 20 seconds ago, 
+	// they are considered offline
 	app.put("/api/online", function (req, res) {
 		db.Users.update({
 			online: Date.now()
@@ -73,9 +75,8 @@ module.exports = function (app) {
 	// Otherwise the user will be sent an error
 	app.get("/api/user/:user", function (req, res) {
 		// return only username
-		db.Users.findOne({
-			attributes: ["userId", "username", "online"]
-		},{ 
+		db.Users.findOne({ 
+			attributes: ["username", "userId", "online"],
 			where: {
 				username: req.params.user
 			}
@@ -93,8 +94,7 @@ module.exports = function (app) {
 	}),
 	app.post("/api/contacts", function(req,res){
 		db.Users.findAll({
-			attributes:["userId", "username", "online"]
-		},{
+			attributes: ["username", "userId", "online"],
 			where:{
 				userId:{
 					[Op.or]: req.body.users
@@ -105,7 +105,6 @@ module.exports = function (app) {
 			response.forEach(element => {
 				results.push(element.dataValues)
 			});
-			console.log(results)
 			res.json(results);
 		})
 	})
