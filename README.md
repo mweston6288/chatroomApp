@@ -13,3 +13,16 @@ A class project: Make a secure chat room
 * Client connects to server to receive pending messages; server deletes message after sending to client
 * Client pings server every 5-10 seconds
 * Message chains are stored locally
+
+## Plans for secure message storage
+* On user creation, make a public/private key
+* public key is stored in server, private is stored on localstorage
+* When users send messages, a shared key is generated
+* shared key is stored in database after being encrypted by user public key
+
+## limits with solution
+* User cannot change keys
+* User cannot change devices
+
+## Promising solution
+https://github.com/digitalbazaar/forge#performance

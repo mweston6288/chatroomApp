@@ -25,6 +25,12 @@ module.exports = function (sequelize, DataTypes) {
 				const hash = bcrypt.hashSync(value, 10);
 				this.setDataValue('password', hash);
 			}
+		},
+		publicKey: {
+			type: DataTypes.JSON
+		},
+		online:{
+			type: DataTypes.BIGINT,
 		}
 	})
 
@@ -34,5 +40,6 @@ module.exports = function (sequelize, DataTypes) {
 	Users.prototype.validPassword = function (password) {
 		return bcrypt.compareSync(password, this.password);
 	};
+
 	return Users;
 }

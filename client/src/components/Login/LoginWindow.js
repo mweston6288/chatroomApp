@@ -5,7 +5,7 @@
  * 
  * This is a supercomponenet to LoginForm and SignupForm
  */
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import axios from "axios";
 import Modal from "react-bootstrap/Modal";
 import Alert from "react-bootstrap/Alert"
@@ -24,6 +24,16 @@ function LoginWindow(){
 		show: false,
 		message: ""
 	})
+	useEffect(()=>{
+		if (userContext.userId !== ""){
+			setInterval(()=>{
+				axios.put("/api/online", {
+					userId: userContext.userId,
+				})
+			}, 5000)
+		}
+	})
+
 
 	// Methods that update input's state when user writes into the 
 	// username, password, or confirmPassword fields
@@ -101,6 +111,7 @@ function LoginWindow(){
 		axios.post("/api/newUser", login).then((response)=>{
 			if(!response.data.errors){
 				setUserContext({type: "login", data: response.data});
+				localStorage.setItem("UserInfo", JSON.stringify(response.data))
 				setLogin({ type: "close" });
 			}else{
 				setTimeout(closeAlert, 5000);
