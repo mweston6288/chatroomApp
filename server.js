@@ -6,7 +6,7 @@ const compression = require("compression");
 const passport = require("./backend/config/passport");
 const https_options = {
 	key: fs.readFileSync("./keys/server.key"),
-	cert: fs.readFileSync("./keys/server.cert"),
+	cert: fs.readFileSync("./keys/server.crt"),
 };
 const PORT = process.env.PORT || 8081; // change the number if needed
 const app = express();

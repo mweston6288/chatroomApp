@@ -15,13 +15,11 @@ module.exports = function (app) {
 		db.Users.create({
 			username: req.body.username,
 			password: req.body.password,
-			publicKey: keypair.publicKey	
 		}).then(function (results) {
 			// return an object containing only the username and userId.			
 			const response = {
 				userId: results.dataValues.userId, 
 				username: results.dataValues.username,
-				key: keypair.privateKey
 			};
 			res.json(response);
 			res.end();
