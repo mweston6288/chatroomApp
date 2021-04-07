@@ -11,10 +11,11 @@ module.exports = function (sequelize, DataTypes) {
 			type: DataTypes.INTEGER,
 			allowNull: false
 		},
-		password: {
+		receiverId: {
 			type: DataTypes.INTEGER,
 			allowNull: false
 		},
+		// If 1, message is a session key. If 2, message is a message
 		type: {
 			type: DataTypes.INTEGER
 		},

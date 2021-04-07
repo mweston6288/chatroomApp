@@ -27,6 +27,7 @@ app.use(compression());
 
 // link routes go here
 require("./backend/routes/userApi")(app);
+require("./backend/routes/messagesApi")(app);
 
 
 // Start our server so that it can begin listening to client requests.
