@@ -14,7 +14,7 @@ function ContactList(){
 
 	useEffect(() => {
 		if (loggedIn) {
-			setInterval(() => {
+			const interval = setInterval(() => {
 				if (Users.userIds.length > 0){
 					axios.post("/api/contacts",{
 						users: Users.userIds
@@ -23,6 +23,8 @@ function ContactList(){
 					})
 				}
 			}, 5000)
+			return ()=>clearInterval(interval)
+			
 		}
 	})
 

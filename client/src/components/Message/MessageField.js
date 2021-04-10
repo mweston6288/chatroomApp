@@ -1,19 +1,32 @@
-import React from "react";
+import React, {useEffect} from "react";
 import { useMessageContext } from "../../utils/MessageContext";
 import {useUserContext} from "../../utils/UserContext";
 import Form from "react-bootstrap/Form"
 import Button from "react-bootstrap/Button"
 import axios from "axios";
-
+import Message from "./Message"
 function MessageField() {
 
-	const [{userId}] = useUserContext();
+	const [{userId, loggedIn}] = useUserContext();
 	const [message, setMessage] = useMessageContext();
+
+	useEffect(() => {
+		const interval = setInterval(() => {
+			if (loggedIn) {
+
+				console.log(Date.now())
+				axios.get("/api/message/"+userId).then((response)=>{
+					setMessage({type: "getMessage", data: response.data})
+				})
+			}
+		}, 5000)
+		return ()=> clearInterval(interval)
+	})
+
 	const handleTextField = (e)=>{
 		if (e.target.value.length >280 || message.to === "")
 			return;
 		setMessage({type: "updateNewMessage", message: e.target.value});
-		console.log(message.newMessage);
 	}
 	const handleSubmit=(e)=>{
 		axios.post("/api/newMessage",{
@@ -37,6 +50,16 @@ function MessageField() {
 					Send
 				</Button>
 			</Form>
+			<div>
+				{message.messages.map((message, index) => (
+					<>
+					{message.senderId == message.to || (message.senderId == userId && message.receiverId == message.to) ?
+					<Message message={message}/>
+						:
+					<></>}
+					</>
+				))}
+			</div>
 		</>
 	)
 }

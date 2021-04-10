@@ -11,7 +11,9 @@ const { Provider } = MessageContext;
 const reducer = (state, action) => {
 	switch (action.type) {
 		case "getMessage":{
-			state.messages.push({message: action.message, sender: action.sender, time: action.time});
+			action.data.forEach((data)=>{
+				state.messages.push(data);
+			})
 			return ({ ...state });
 		}
 		case "updateNewMessage":{

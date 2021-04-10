@@ -12,4 +12,15 @@ module.exports = function (app) {
 			res.json(err);
 		});
 	});
+
+	app.get("/api/message/:userId", function (req, res) {
+		// return only username
+		db.Messages.findAll({
+			where: {
+				receiverId: req.params.userId
+			}
+		}).then(function (results) {
+			res.json(results);
+		});
+	})
 }

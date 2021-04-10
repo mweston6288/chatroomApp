@@ -26,12 +26,13 @@ function LoginWindow(){
 		message: ""
 	})
 	useEffect(()=>{
-		if (userContext.userId !== ""){
-			setInterval(()=>{
+		if (userContext.loggedIn){
+			const interval = setInterval(()=>{
 				axios.put("/api/online", {
 					userId: userContext.userId,
 				})
 			}, 5000)
+			return ()=>clearInterval(interval);
 		}
 	})
 
