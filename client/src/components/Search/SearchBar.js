@@ -4,11 +4,12 @@ import FormControl from "react-bootstrap/FormControl";
 import Button from "react-bootstrap/Button";
 import { useSearchContext } from "../../utils/SearchContext";
 import { useContactListContext } from "../../utils/ContactListContext";
-
+import {useUserContext} from "../../utils/UserContext"
 import axios from "axios";
 
 function SearchBar(){
 	
+	const [user] = useUserContext()
 	const [search, setSearch] = useSearchContext();
 	const [contactList, setContactList] = useContactListContext();
 
@@ -20,8 +21,15 @@ function SearchBar(){
 			if (response.data.error){
 				console.log("User does not exist");
 			}
-			else
-				setContactList({ type: "addContact", user: response.data, userId: response.data.userId})
+			else{
+				setContactList({ type: "addContact", user: response.data, userId: response.data.userId })
+				axios.post("/api/newMessage", {
+					senderId: user.userId,
+					receiverId: response.data.userId,
+					message: "message.newMessage",
+					type: 1
+				})
+			} 
 		})
 		setSearch({ type: "resetState"})
 	}

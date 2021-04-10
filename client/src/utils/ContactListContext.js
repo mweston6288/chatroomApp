@@ -10,7 +10,7 @@ const reducer = (state, action) => {
 		case "addContact": {
 			state.Users.push(action.user);
 			state.userIds.push(action.userId);
-
+			console.log(state);
 			return ({ ...state });
 		}
 		case "updateContacts":{

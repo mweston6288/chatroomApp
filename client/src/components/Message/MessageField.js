@@ -5,18 +5,35 @@ import Form from "react-bootstrap/Form"
 import Button from "react-bootstrap/Button"
 import axios from "axios";
 import Message from "./Message"
+import {useContactListContext} from "../../utils/ContactListContext"
 function MessageField() {
 
 	const [{userId, loggedIn}] = useUserContext();
 	const [message, setMessage] = useMessageContext();
+	const [contactList, setContactList] = useContactListContext()
 
 	useEffect(() => {
 		const interval = setInterval(() => {
 			if (loggedIn) {
 
-				console.log(message)
 				axios.get("/api/message/"+userId).then((response)=>{
-					setMessage({type: "getMessage", data: response.data})
+					console.log(response)
+					response.data.forEach((m)=>{
+						console.log(m)
+						if (m.type == 2){
+							setMessage({ type: "getMessage", data: response.data })
+						}
+						else{
+							axios.get("/api/userId/" + m.senderId).then((response) => {
+								if (response.data.error) {
+									console.log("User does not exist");
+								}
+								else {
+									setContactList({ type: "addContact", user: response.data, userId: response.data.userId })
+								}
+							})
+						}
+					})
 				})
 			}
 		}, 5000)

@@ -90,6 +90,26 @@ module.exports = function (app) {
 			res.json(response);
 		});
 	}),
+		app.get("/api/userId/:userId", function (req, res) {
+			// return only username
+			console.log(req)
+			db.Users.findOne({
+				attributes: ["username", "userId", "online"],
+				where: {
+					userId: req.params.userId
+				}
+			}).then(function (results) {
+				let response = {};
+				if (results == null) {
+					response = {
+						error: "Name does not exist"
+					}
+				}
+				else
+					response = results.dataValues
+				res.json(response);
+			});
+		}),
 	app.post("/api/contacts", function(req,res){
 		db.Users.findAll({
 			attributes: ["username", "userId", "online"],
