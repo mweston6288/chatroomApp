@@ -16,6 +16,10 @@ const reducer = (state, action) => {
 			})
 			return ({ ...state });
 		}
+		case "addMessage":{
+			state.messages.push(action.data);
+			return ({ ...state });
+		}
 		case "updateNewMessage":{
 			return ({ ...state, newMessage: action.message });
 

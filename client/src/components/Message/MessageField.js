@@ -14,7 +14,7 @@ function MessageField() {
 		const interval = setInterval(() => {
 			if (loggedIn) {
 
-				console.log(Date.now())
+				console.log(message)
 				axios.get("/api/message/"+userId).then((response)=>{
 					setMessage({type: "getMessage", data: response.data})
 				})
@@ -35,7 +35,8 @@ function MessageField() {
 			message: message.newMessage,
 			type: 2
 		}).then(()=>{
-			
+			setMessage({type:"addMessage", data:{senderId: userId, receiverId: message.to, message: message.newMessage}})
+			console.log(message.messages)
 		})
 	}
 	
@@ -50,11 +51,11 @@ function MessageField() {
 					Send
 				</Button>
 			</Form>
-			<div>
-				{message.messages.map((message, index) => (
+			<div >
+				{message.messages.map((m) => (
 					<>
-					{message.senderId == message.to || (message.senderId == userId && message.receiverId == message.to) ?
-					<Message message={message}/>
+					{m.senderId == message.to || m.receiverId == message.to ?
+					<Message message={m}/>
 						:
 					<></>}
 					</>

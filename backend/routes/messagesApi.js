@@ -20,6 +20,14 @@ module.exports = function (app) {
 				receiverId: req.params.userId
 			}
 		}).then(function (results) {
+			results.forEach((r)=>{
+				console.log(r)
+				db.Messages.destroy({
+					where:{
+						messageId: r.dataValues.messageId
+					}
+				})
+			})
 			res.json(results);
 		});
 	})
