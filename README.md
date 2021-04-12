@@ -26,3 +26,9 @@ A class project: Make a secure chat room
 
 ## Promising solution
 https://github.com/digitalbazaar/forge#performance
+
+## Idea for security
+* on login, create a key pair. Store public in server. Store private in userContext
+* When sending first message, flag as key delivery. Create shared key
+* Get receiver's public key. Encrypt shared key using public key
+* Recevier gets key and decrypts using their private key.

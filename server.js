@@ -6,7 +6,7 @@ const compression = require("compression");
 const passport = require("./backend/config/passport");
 const https_options = {
 	key: fs.readFileSync("./keys/server.key"),
-	cert: fs.readFileSync("./keys/server.cert"),
+	cert: fs.readFileSync("./keys/server.crt"),
 };
 const PORT = process.env.PORT || 8081; // change the number if needed
 const app = express();
@@ -27,7 +27,14 @@ app.use(compression());
 
 // link routes go here
 require("./backend/routes/userApi")(app);
+require("./backend/routes/messagesApi")(app);
 
+// Reminder to myself: I can save method references
+const forge = require("node-forge");
+const rsa = forge.rsa
+const keypair = rsa.generateKeyPair({bits: 2048})
+const encrypt = keypair.publicKey.encrypt
+console.log(encrypt("Hello"))
 
 // Start our server so that it can begin listening to client requests.
 db.sequelize.sync().then(() => {

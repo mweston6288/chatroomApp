@@ -11,8 +11,26 @@ const { Provider } = MessageContext;
 const reducer = (state, action) => {
 	switch (action.type) {
 		case "getMessage":{
-			state.messages.push({message: action.message, sender: action.sender, time: action.time});
+			action.data.forEach((data)=>{
+				state.messages.push(data);
+			})
 			return ({ ...state });
+		}
+		case "addMessage":{
+			state.messages.push(action.data);
+			return ({ ...state });
+		}
+		case "updateNewMessage":{
+			return ({ ...state, newMessage: action.message });
+
+		}
+		case "updateTo":{
+			return ({ ...state, newMessage: "", to: action.data });
+
+		}
+		case "resetMessage":{
+			return ({ ...state, newMessage: ""});
+
 		}
 		default: {
 			return ({ ...state });
@@ -23,6 +41,8 @@ const reducer = (state, action) => {
 // default state of the context
 const MessageProvider = ({ value = [], ...props }) => {
 	const [state, dispatch] = useReducer(reducer, {
+		to: "",
+		newMessage:"",
 		messages:[]
 	});
 	return <Provider value={[state, dispatch]}{...props} />;

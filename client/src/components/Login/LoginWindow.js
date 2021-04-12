@@ -13,6 +13,7 @@ import LoginForm from "./LoginForm";
 import SignupForm from "./SignupForm";
 import {useUserContext} from "../../utils/UserContext";
 import {useLoginContext} from "../../utils/LoginContext";
+import forge from "node-forge";
 function LoginWindow(){
 	// password must be 8-32 characters with at least 1
 	// capital and lowercase letter, a number, and special character
@@ -25,12 +26,13 @@ function LoginWindow(){
 		message: ""
 	})
 	useEffect(()=>{
-		if (userContext.userId !== ""){
-			setInterval(()=>{
+		if (userContext.loggedIn){
+			const interval = setInterval(()=>{
 				axios.put("/api/online", {
 					userId: userContext.userId,
 				})
 			}, 5000)
+			return ()=>clearInterval(interval);
 		}
 	})
 
@@ -60,6 +62,7 @@ function LoginWindow(){
 	// This uses a POST request because GET requests would store the 
 	// password as a visible parameter
 	const handleLogin = () =>{
+
 		// Request user information. Will proceed to .then() only if passport returns
 		// a successful value
 		axios.post("/api/user", login).then((response) => {
