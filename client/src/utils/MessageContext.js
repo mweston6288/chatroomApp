@@ -28,6 +28,10 @@ const reducer = (state, action) => {
 			return ({ ...state, newMessage: "", to: action.data });
 
 		}
+		case "resetMessage":{
+			return ({ ...state, newMessage: ""});
+
+		}
 		default: {
 			return ({ ...state });
 		}

@@ -17,9 +17,7 @@ function MessageField() {
 			if (loggedIn) {
 
 				axios.get("/api/message/"+userId).then((response)=>{
-					console.log(response)
 					response.data.forEach((m)=>{
-						console.log(m)
 						if (m.type == 2){
 							setMessage({ type: "getMessage", data: response.data })
 						}
@@ -53,7 +51,7 @@ function MessageField() {
 			type: 2
 		}).then(()=>{
 			setMessage({type:"addMessage", data:{senderId: userId, receiverId: message.to, message: message.newMessage}})
-			console.log(message.messages)
+			setMessage({type: "resetMessage"})
 		})
 	}
 	

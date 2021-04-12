@@ -35,7 +35,7 @@ function ContactList(){
 		<>
 		{
 			Users.Users.map((user)=>(
-				<Card onClick={() => handleSelect(user.userId)} >
+				<Card onClick={() => handleSelect(user.userId)} style={user.userId == message.to ? { "backgroundColor": "#99defb" } : {}}>
 					<Card.Body>
 						{user.username}
 					</Card.Body>

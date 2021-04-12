@@ -21,7 +21,6 @@ module.exports = function (app) {
 			}
 		}).then(function (results) {
 			results.forEach((r)=>{
-				console.log(r)
 				db.Messages.destroy({
 					where:{
 						messageId: r.dataValues.messageId

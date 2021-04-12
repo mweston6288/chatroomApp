@@ -92,7 +92,6 @@ module.exports = function (app) {
 	}),
 		app.get("/api/userId/:userId", function (req, res) {
 			// return only username
-			console.log(req)
 			db.Users.findOne({
 				attributes: ["username", "userId", "online"],
 				where: {
