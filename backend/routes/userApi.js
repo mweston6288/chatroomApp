@@ -71,7 +71,7 @@ module.exports = function (app) {
 	app.get("/api/user/:user", function (req, res) {
 		// return only username
 		db.Users.findOne({ 
-			attributes: ["username", "userId", "online"],
+			attributes: ["username", "userId", "online", "publicKey"],
 			where: {
 				username: req.params.user
 			}
@@ -87,28 +87,27 @@ module.exports = function (app) {
 			res.json(response);
 		});
 	}),
-		app.get("/api/userId/:userId", function (req, res) {
-			// return only username
-			db.Users.findOne({
-				attributes: ["username", "userId", "online", "publicKey"],
-				where: {
-					userId: req.params.userId
+	app.get("/api/userId/:userId", function (req, res) {
+		db.Users.findOne({
+			attributes: ["username", "userId", "online", "publicKey"],
+			where: {
+				userId: req.params.userId
+			}
+		}).then(function (results) {
+			let response = {};
+			if (results == null) {
+				response = {
+					error: "Name does not exist"
 				}
-			}).then(function (results) {
-				let response = {};
-				if (results == null) {
-					response = {
-						error: "Name does not exist"
-					}
-				}
-				else
-					response = results.dataValues
-				res.json(response);
-			});
-		}),
+			}
+			else
+				response = results.dataValues
+			res.json(response);
+		});
+	}),
 	app.post("/api/contacts", function(req,res){
 		db.Users.findAll({
-			attributes: ["username", "userId", "online"],
+			attributes: ["username", "userId", "online", "publicKey"],
 			where:{
 				userId:{
 					[Op.or]: req.body.users
@@ -117,7 +116,8 @@ module.exports = function (app) {
 		}).then((response)=>{
 			let results = []
 			response.forEach(element => {
-				results.push(element.dataValues)
+				if (Date.now() < element.dataValues.online + 20000)
+					results.push(element.dataValues)
 			});
 			res.json(results);
 		})

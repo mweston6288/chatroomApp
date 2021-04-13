@@ -8,11 +8,17 @@ const { Provider } = ContactListContext;
 const reducer = (state, action) => {
 	switch (action.type) {
 		case "addContact": {
-			state.Users.push(action.user);
-			state.userIds.push(action.userId);
+			if (!state.userIds.includes(action.user.userId)){
+				state.Users.push(action.user);
+				state.userIds.push(action.userId);
+			}
 			return ({ ...state });
 		}
 		case "updateContacts":{
+			state.userIds = [];
+			action.users.forEach((user)=>{
+				state.userIds.push(user.userId)
+			})
 			return ({...state, Users: action.users})
 		}
 		default: {
