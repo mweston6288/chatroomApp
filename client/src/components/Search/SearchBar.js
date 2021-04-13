@@ -41,7 +41,7 @@ function SearchBar(){
 				axios.post("/api/newMessage", {
 					senderId: user.userId,
 					receiverId: response.data.userId,
-					message: "message.newMessage",
+					message: response.data.publicKey.encrypt("message"),
 					type: 1
 				})
 			} 

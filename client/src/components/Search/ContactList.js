@@ -34,7 +34,6 @@ function ContactList(){
 							data.publicKey = publicKey
 						})
 						setUsers({type: "updateContacts", users: response.data})
-						console.log(Users.Users)
 					})
 				}
 			}, 5000)

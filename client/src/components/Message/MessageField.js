@@ -10,7 +10,7 @@ import forge from "node-forge";
 
 function MessageField() {
 
-	const [{userId, loggedIn}] = useUserContext();
+	const [{userId, loggedIn, privateKey}] = useUserContext();
 	const [message, setMessage] = useMessageContext();
 	const [contactList, setContactList] = useContactListContext()
 	let publicKey;

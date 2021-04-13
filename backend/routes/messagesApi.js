@@ -14,19 +14,18 @@ module.exports = function (app) {
 	});
 
 	app.get("/api/message/:userId", function (req, res) {
-		// return only username
 		db.Messages.findAll({
 			where: {
 				receiverId: req.params.userId
 			}
 		}).then(function (results) {
-			results.forEach((r)=>{
+			/*results.forEach((r)=>{
 				db.Messages.destroy({
 					where:{
 						messageId: r.dataValues.messageId
 					}
 				})
-			})
+			})*/
 			res.json(results);
 		});
 	})
