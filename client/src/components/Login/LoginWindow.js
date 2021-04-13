@@ -18,7 +18,7 @@ function LoginWindow(){
 	// password must be 8-32 characters with at least 1
 	// capital and lowercase letter, a number, and special character
 	const regex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z0-9])(?!.*\s).{8,32}$/;
-
+	const rsa = forge.rsa;
 	const [login, setLogin] = useLoginContext();
 	const [userContext, setUserContext] = useUserContext();
 	const [alert, setAlert] = useState({
@@ -27,6 +27,7 @@ function LoginWindow(){
 	})
 	useEffect(()=>{
 		if (userContext.loggedIn){
+
 			const interval = setInterval(()=>{
 				axios.put("/api/online", {
 					userId: userContext.userId,
@@ -62,10 +63,15 @@ function LoginWindow(){
 	// This uses a POST request because GET requests would store the 
 	// password as a visible parameter
 	const handleLogin = () =>{
-
 		// Request user information. Will proceed to .then() only if passport returns
 		// a successful value
 		axios.post("/api/user", login).then((response) => {
+			rsa.generateKeyPair({bits: 2048}, (err, keypair)=>{
+				// This is stupid. THis is SO stupid but it's the only way I can reverse engineer the RSA code
+				axios.post("/api/publicKey", {userId: response.data.userId, publicKey: keypair.publicKey}).then(()=>{})
+				setUserContext({ type: "key", data: keypair.privateKey })
+			})
+
 			// Update user Context and close window
 			setUserContext({ type: "login", data: response.data });
 			setLogin({ type: "close" });
@@ -113,8 +119,12 @@ function LoginWindow(){
 		// because reasonably, new users do not have any
 		axios.post("/api/newUser", login).then((response)=>{
 			if(!response.data.errors){
+				rsa.generateKeyPair({ bits: 2048 }, (err, keypair) => {
+					// This is stupid. THis is SO stupid but it's the only way I can reverse engineer the RSA code
+					axios.post("/api/publicKey", { userId: response.data.userId, publicKey: keypair.publicKey }).then(() => {})
+					setUserContext({type: "key", data: keypair.privateKey})
+				})
 				setUserContext({type: "login", data: response.data});
-				localStorage.setItem("UserInfo", JSON.stringify(response.data))
 				setLogin({ type: "close" });
 			}else{
 				setTimeout(closeAlert, 5000);

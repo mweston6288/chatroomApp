@@ -3,7 +3,6 @@ import Card from "react-bootstrap/Card"
 import { useContactListContext } from "../../utils/ContactListContext";
 import { useUserContext } from "../../utils/UserContext";
 import { useMessageContext } from "../../utils/MessageContext";
-import Button from "react-bootstrap/Button"
 import axios from "axios";
 
 function ContactList(){
@@ -28,14 +27,14 @@ function ContactList(){
 		}
 	})
 
-	const handleSelect=(userId)=>{
-		setMessage({type: "updateTo", data: userId})
+	const handleSelect=(userId, index)=>{
+		setMessage({type: "updateTo", data: userId, index: index})
 	}
 	return(
 		<>
 		{
-			Users.Users.map((user)=>(
-				<Card onClick={() => handleSelect(user.userId)} style={user.userId == message.to ? { "backgroundColor": "#99defb" } : {}}>
+			Users.Users.map((user, index)=>(
+				<Card onClick={() => handleSelect(user.userId, index)} style={user.userId == message.to ? { "backgroundColor": "#99defb" } : {}}>
 					<Card.Body>
 						{user.username}
 					</Card.Body>

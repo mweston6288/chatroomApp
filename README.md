@@ -32,3 +32,13 @@ https://github.com/digitalbazaar/forge#performance
 * When sending first message, flag as key delivery. Create shared key
 * Get receiver's public key. Encrypt shared key using public key
 * Recevier gets key and decrypts using their private key.
+
+## Breakthrough
+* Saving public key top DB causes it to lose it's methods. Can restore by building another key and setting each value.
+						keypair.publicKey.e.data = res.data.publicKey.e.data
+						keypair.publicKey.e.s = res.data.publicKey.e.s
+						keypair.publicKey.e.t = res.data.publicKey.e.t
+						keypair.publicKey.n.data = res.data.publicKey.n.data
+						keypair.publicKey.n.s = res.data.publicKey.n.s
+						keypair.publicKey.n.t = res.data.publicKey.n.t
+* Saving private key to context keeps the key. No further action needed

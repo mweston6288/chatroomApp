@@ -4,14 +4,11 @@
 const db = require("../models");
 const {Op} = require("sequelize");
 const passport = require("../config/passport");
-const forge = require("node-forge");
 module.exports = function (app) {
 	// create a new user account
 	// If successful, return the user id and name
 	// If username already exists, return the error instead
 	app.post("/api/newUser", function (req, res) {
-		const rsa = forge.rsa;
-		const keypair = rsa.generateKeyPair({ bits: 2048, e: 0x10001 });
 		db.Users.create({
 			username: req.body.username,
 			password: req.body.password,
@@ -93,7 +90,7 @@ module.exports = function (app) {
 		app.get("/api/userId/:userId", function (req, res) {
 			// return only username
 			db.Users.findOne({
-				attributes: ["username", "userId", "online"],
+				attributes: ["username", "userId", "online", "publicKey"],
 				where: {
 					userId: req.params.userId
 				}
@@ -123,6 +120,17 @@ module.exports = function (app) {
 				results.push(element.dataValues)
 			});
 			res.json(results);
+		})
+	})
+	app.post("/api/publicKey", function (req,res){
+		db.Users.update({
+			publicKey: req.body.publicKey
+		}, {
+			where: {
+				userId: req.body.userId
+			}
+		}).then((response) => {
+			res.json(response);
 		})
 	})
 }

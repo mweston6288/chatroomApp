@@ -20,7 +20,12 @@ const reducer = (state, action) => {
 
 	// reset user details after logging out
 	case "logout":{
-			return ({ ...state, loggedIn:false, username:"",userId:""});
+		return ({ ...state, loggedIn:false, username:"",userId:""});
+	}
+	case "key":{
+	
+		return ({ ...state, privateKey:action.data});
+
 	}
 	default:
 		return ({ ...state });
@@ -35,6 +40,7 @@ const UserProvider = ({ value = [], ...props }) => {
 		loggedIn: false,
 		username:"",
 		userId:"",
+		privateKey:[]
 	});
 	return <Provider value={[state, dispatch]}{...props} />;
 };
