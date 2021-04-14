@@ -35,8 +35,7 @@ function MessageField() {
 							decipher.start({ iv: sender.iv });
 							decipher.update(cipher.output);
 							decipher.finish();
-							console.log(decipher.output)
-							console.log(m)
+							
 							m.message = decipher.output.data
 							setMessage({ type: "addMessage", data: m })
 						}
