@@ -4,14 +4,11 @@
 const db = require("../models");
 const {Op} = require("sequelize");
 const passport = require("../config/passport");
-const forge = require("node-forge");
 module.exports = function (app) {
 	// create a new user account
 	// If successful, return the user id and name
 	// If username already exists, return the error instead
 	app.post("/api/newUser", function (req, res) {
-		const rsa = forge.rsa;
-		const keypair = rsa.generateKeyPair({ bits: 2048, e: 0x10001 });
 		db.Users.create({
 			username: req.body.username,
 			password: req.body.password,
@@ -74,7 +71,7 @@ module.exports = function (app) {
 	app.get("/api/user/:user", function (req, res) {
 		// return only username
 		db.Users.findOne({ 
-			attributes: ["username", "userId", "online"],
+			attributes: ["username", "userId", "online", "publicKey"],
 			where: {
 				username: req.params.user
 			}
@@ -90,28 +87,27 @@ module.exports = function (app) {
 			res.json(response);
 		});
 	}),
-		app.get("/api/userId/:userId", function (req, res) {
-			// return only username
-			db.Users.findOne({
-				attributes: ["username", "userId", "online"],
-				where: {
-					userId: req.params.userId
+	app.get("/api/userId/:userId", function (req, res) {
+		db.Users.findOne({
+			attributes: ["username", "userId", "online", "publicKey"],
+			where: {
+				userId: req.params.userId
+			}
+		}).then(function (results) {
+			let response = {};
+			if (results == null) {
+				response = {
+					error: "Name does not exist"
 				}
-			}).then(function (results) {
-				let response = {};
-				if (results == null) {
-					response = {
-						error: "Name does not exist"
-					}
-				}
-				else
-					response = results.dataValues
-				res.json(response);
-			});
-		}),
+			}
+			else
+				response = results.dataValues
+			res.json(response);
+		});
+	}),
 	app.post("/api/contacts", function(req,res){
 		db.Users.findAll({
-			attributes: ["username", "userId", "online"],
+			attributes: ["username", "userId", "online", "publicKey"],
 			where:{
 				userId:{
 					[Op.or]: req.body.users
@@ -120,9 +116,21 @@ module.exports = function (app) {
 		}).then((response)=>{
 			let results = []
 			response.forEach(element => {
-				results.push(element.dataValues)
+				if (Date.now() < element.dataValues.online + 20000)
+					results.push(element.dataValues)
 			});
 			res.json(results);
+		})
+	})
+	app.post("/api/publicKey", function (req,res){
+		db.Users.update({
+			publicKey: req.body.publicKey
+		}, {
+			where: {
+				userId: req.body.userId
+			}
+		}).then((response) => {
+			res.json(response);
 		})
 	})
 }

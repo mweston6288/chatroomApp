@@ -25,7 +25,7 @@ const reducer = (state, action) => {
 
 		}
 		case "updateTo":{
-			return ({ ...state, newMessage: "", to: action.data });
+			return ({ ...state, newMessage: "", to: action.data, index:action.index });
 
 		}
 		case "resetMessage":{
@@ -43,7 +43,8 @@ const MessageProvider = ({ value = [], ...props }) => {
 	const [state, dispatch] = useReducer(reducer, {
 		to: "",
 		newMessage:"",
-		messages:[]
+		messages:[],
+		index: ""
 	});
 	return <Provider value={[state, dispatch]}{...props} />;
 };

@@ -9,12 +9,12 @@ module.exports = function (app) {
 		}).then(function (results) {
 			res.json(results);
 		}).catch(function (err) {
+			console.log(err)
 			res.json(err);
 		});
 	});
 
 	app.get("/api/message/:userId", function (req, res) {
-		// return only username
 		db.Messages.findAll({
 			where: {
 				receiverId: req.params.userId

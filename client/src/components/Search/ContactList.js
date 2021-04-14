@@ -3,14 +3,16 @@ import Card from "react-bootstrap/Card"
 import { useContactListContext } from "../../utils/ContactListContext";
 import { useUserContext } from "../../utils/UserContext";
 import { useMessageContext } from "../../utils/MessageContext";
-import Button from "react-bootstrap/Button"
 import axios from "axios";
-
+import forge from "node-forge"
 function ContactList(){
 	const [Users, setUsers] = useContactListContext();
 	const [{loggedIn}] = useUserContext();
 	const [message, setMessage] = useMessageContext();
-
+	let publicKey;
+	forge.rsa.generateKeyPair({ bits: 2048 }, (err, keypair) => {
+		publicKey = keypair.publicKey
+	})
 
 	useEffect(() => {
 		if (loggedIn) {
@@ -19,6 +21,18 @@ function ContactList(){
 					axios.post("/api/contacts",{
 						users: Users.userIds
 					}).then((response)=>{
+						response.data.forEach((data)=>{
+							// This is SO stupid but it's the only way I can get things to work.
+							// the database doesn't save the encrypt function so I have to build a new key and
+							// set the necessary datavalues to what I need
+							publicKey.e.data = data.publicKey.e.data
+							publicKey.e.s = data.publicKey.e.s
+							publicKey.e.t = data.publicKey.e.t
+							publicKey.n.data = data.publicKey.n.data
+							publicKey.n.s = data.publicKey.n.s
+							publicKey.n.t = data.publicKey.n.t
+							data.publicKey = publicKey
+						})
 						setUsers({type: "updateContacts", users: response.data})
 					})
 				}
@@ -28,14 +42,14 @@ function ContactList(){
 		}
 	})
 
-	const handleSelect=(userId)=>{
-		setMessage({type: "updateTo", data: userId})
+	const handleSelect=(user)=>{
+		setMessage({type: "updateTo", data: user})
 	}
 	return(
 		<>
 		{
 			Users.Users.map((user)=>(
-				<Card onClick={() => handleSelect(user.userId)} style={user.userId == message.to ? { "backgroundColor": "#99defb" } : {}}>
+				<Card onClick={() => handleSelect(user)} style={user.userId == message.to.userId ? { "backgroundColor": "#99defb" } : {}}>
 					<Card.Body>
 						{user.username}
 					</Card.Body>

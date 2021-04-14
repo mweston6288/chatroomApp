@@ -20,7 +20,7 @@ module.exports = function (sequelize, DataTypes) {
 			type: DataTypes.INTEGER
 		},
 		message: {
-			type: DataTypes.STRING,
+			type: DataTypes.STRING(4096),
 		}
 	})
 

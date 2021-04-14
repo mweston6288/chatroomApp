@@ -17,7 +17,7 @@ function Message(props) {
 	}
 	return(
 		<>
-		{props.message.senderId == messages.to ?
+		{props.message.senderId == messages.to.userId ?
 			<div>
 				<p style={toStyle}>
 					{props.message.message}

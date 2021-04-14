@@ -29,13 +29,6 @@ app.use(compression());
 require("./backend/routes/userApi")(app);
 require("./backend/routes/messagesApi")(app);
 
-// Reminder to myself: I can save method references
-const forge = require("node-forge");
-const rsa = forge.rsa
-const keypair = rsa.generateKeyPair({bits: 2048})
-const encrypt = keypair.publicKey.encrypt
-console.log(encrypt("Hello"))
-
 // Start our server so that it can begin listening to client requests.
 db.sequelize.sync().then(() => {
 	https.createServer(https_options, app).listen(PORT, () => {
