@@ -23,7 +23,22 @@ function MessageField() {
 				axios.get("/api/message/"+userId).then((response)=>{
 					response.data.forEach((m)=>{
 						if (m.type == 2){
-							setMessage({ type: "getMessage", data: response.data })
+							const sender = contactList.Users.find(user=>
+								user.userId == m.senderId)
+
+							const cipher = forge.cipher.createCipher('AES-CBC', sender.sessionKey);
+							cipher.start({ iv: sender.iv });
+							cipher.update();
+							cipher.finish();
+							cipher.output.data = m.message
+							const decipher = forge.cipher.createDecipher('AES-CBC', sender.sessionKey);
+							decipher.start({ iv: sender.iv });
+							decipher.update(cipher.output);
+							decipher.finish();
+							console.log(decipher.output)
+							console.log(m)
+							m.message = decipher.output.data
+							setMessage({ type: "addMessage", data: m })
 						}
 						else{
 							axios.get("/api/userId/" + m.senderId).then((response) => {
@@ -41,6 +56,14 @@ function MessageField() {
 									publicKey.n.s = response.data.publicKey.n.s
 									publicKey.n.t = response.data.publicKey.n.t
 									response.data.publicKey = publicKey
+
+									
+									m.message = JSON.parse(privateKey.decrypt(m.message))
+									const iv = m.message.iv
+									const sessionKey = m.message.sessionKey
+	
+									response.data.iv = iv
+									response.data.sessionKey = sessionKey
 									setContactList({ type: "addContact", user: response.data, userId: response.data.userId })
 								}
 							})
@@ -58,13 +81,17 @@ function MessageField() {
 		setMessage({type: "updateNewMessage", message: e.target.value});
 	}
 	const handleSubmit=(e)=>{
+		const cipher = forge.cipher.createCipher('AES-CBC', message.to.sessionKey);
+		cipher.start({ iv: message.to.iv });
+		cipher.update(forge.util.createBuffer(message.newMessage));
+		cipher.finish();
 		axios.post("/api/newMessage",{
 			senderId: userId,
-			receiverId: message.to,
-			message: message.newMessage,
+			receiverId: message.to.userId,
+			message: cipher.output.data,
 			type: 2
 		}).then(()=>{
-			setMessage({type:"addMessage", data:{senderId: userId, receiverId: message.to, message: message.newMessage}})
+			setMessage({type:"addMessage", data:{senderId: userId, receiverId: message.to.userId, message: message.newMessage}})
 			setMessage({type: "resetMessage"})
 		})
 	}
@@ -83,7 +110,7 @@ function MessageField() {
 			<div >
 				{message.messages.map((m) => (
 					<>
-					{m.senderId == message.to || m.receiverId == message.to ?
+					{m.receiverId == message.to.userId || m.senderId == message.to.userId ?
 					<Message message={m}/>
 						:
 					<></>}

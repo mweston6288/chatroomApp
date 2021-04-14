@@ -27,6 +27,8 @@ function SearchBar(){
 				console.log("User does not exist");
 			}
 			else{
+				const sessionKey = forge.random.getBytesSync(16);
+				const iv = forge.random.getBytesSync(16);
 				// This is SO stupid but it's the only way I can get things to work.
 				// the database doesn't save the encrypt function so I have to build a new key and
 				// set the necessary datavalues to what I need
@@ -37,11 +39,13 @@ function SearchBar(){
 				publicKey.n.s = response.data.publicKey.n.s
 				publicKey.n.t = response.data.publicKey.n.t
 				response.data.publicKey = publicKey
+				response.data.sessionKey = sessionKey;
+				response.data.iv = iv;
 				setContactList({ type: "addContact", user: response.data, userId: response.data.userId })
 				axios.post("/api/newMessage", {
 					senderId: user.userId,
 					receiverId: response.data.userId,
-					message: response.data.publicKey.encrypt("message"),
+					message: response.data.publicKey.encrypt(JSON.stringify({sessionKey: sessionKey, iv: iv})),
 					type: 1
 				})
 			} 

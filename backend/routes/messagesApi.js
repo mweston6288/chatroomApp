@@ -9,6 +9,7 @@ module.exports = function (app) {
 		}).then(function (results) {
 			res.json(results);
 		}).catch(function (err) {
+			console.log(err)
 			res.json(err);
 		});
 	});
@@ -19,13 +20,13 @@ module.exports = function (app) {
 				receiverId: req.params.userId
 			}
 		}).then(function (results) {
-			/*results.forEach((r)=>{
+			results.forEach((r)=>{
 				db.Messages.destroy({
 					where:{
 						messageId: r.dataValues.messageId
 					}
 				})
-			})*/
+			})
 			res.json(results);
 		});
 	})

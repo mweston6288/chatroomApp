@@ -16,10 +16,17 @@ const reducer = (state, action) => {
 		}
 		case "updateContacts":{
 			state.userIds = [];
+			const contacts = []
 			action.users.forEach((user)=>{
 				state.userIds.push(user.userId)
+				const find = state.Users.find((u)=>
+					u.userId == user.userId
+				)
+				user.sessionKey = find.sessionKey
+				user.iv = find.iv
+				contacts.push(user);
 			})
-			return ({...state, Users: action.users})
+			return ({...state, Users: contacts})
 		}
 		default: {
 			return ({ ...state });
