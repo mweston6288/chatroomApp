@@ -1,4 +1,3 @@
-/* eslint-disable react/prop-types */
 /**
  * Subsection of LoginWindow. Displays a login form that has
  * a field for username and password.

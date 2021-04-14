@@ -1,7 +1,6 @@
 /**
  * Model for users. Users contains an id, username, and password
  * password is encrypted using bcrypt before being set
- * Each user can have 0 or more Notes.
  */
 const bcrypt = require("bcrypt");
 module.exports = function (sequelize, DataTypes) {
@@ -26,9 +25,12 @@ module.exports = function (sequelize, DataTypes) {
 				this.setDataValue('password', hash);
 			}
 		},
+		// THe user's public key information
 		publicKey: {
 			type: DataTypes.JSON
 		},
+		// An integer value representing the time when the user last pinged the server
+		// The default build uses the number of milliseconds since January 1, 1970
 		online:{
 			type: DataTypes.BIGINT,
 		}

@@ -1,4 +1,6 @@
-
+/*
+	Database model for messages. Each message has a asender, receiver, and message type
+*/
 module.exports = function (sequelize, DataTypes) {
 
 	const Messages = sequelize.define("Messages", {
@@ -7,10 +9,12 @@ module.exports = function (sequelize, DataTypes) {
 			type: DataTypes.INTEGER,
 			autoIncrement: true
 		},
+		// userId of the sender
 		senderId: {
 			type: DataTypes.INTEGER,
 			allowNull: false
 		},
+		// userID of the receiver
 		receiverId: {
 			type: DataTypes.INTEGER,
 			allowNull: false
@@ -19,6 +23,7 @@ module.exports = function (sequelize, DataTypes) {
 		type: {
 			type: DataTypes.INTEGER
 		},
+		// The string needs to be very large to fit RSA ciphertext
 		message: {
 			type: DataTypes.STRING(4096),
 		}

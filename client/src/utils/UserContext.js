@@ -4,7 +4,7 @@
  * loggedIn: a boolean. if true, there is an active user
  * username: a string. The user's name
  * userId: a number. The userId according to the database
- * categories:an array. Array of all categories made by the user
+ * privateKey: the user's private key for RSA encryption
  */
 
 import React, { useReducer, useContext, createContext } from "react";

@@ -5,7 +5,7 @@ const db = require("../models");
 // Telling passport we want to use a Local Strategy. In other words, we want login with a username and password
 passport.use(new LocalStrategy(
     function(username, password, done) {
-        // When a user tries to sign in this code runs
+        // When a user tries to sign in first look for someone with that username
         db.Users.findOne({
             where: {
                 username: username

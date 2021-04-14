@@ -30,7 +30,7 @@ const reducer = (state, action) => {
 		return ({ ...state,confirmPassword: action.confirmPassword });
 
 	}
-	// set show to false and reset all text fields. Used when login windoww is closed
+	// set show to false and reset all text fields. Used when login window is closed
 	case "close":{
 		return ({ show: false, username: "", password: "", confirmPassword: "" });
 	}

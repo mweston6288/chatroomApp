@@ -19,12 +19,19 @@ function LoginWindow(){
 	// capital and lowercase letter, a number, and special character
 	const regex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z0-9])(?!.*\s).{8,32}$/;
 	const rsa = forge.rsa;
+
+	// access context objects
 	const [login, setLogin] = useLoginContext();
 	const [userContext, setUserContext] = useUserContext();
+	
+	// an alert if login fails
 	const [alert, setAlert] = useState({
 		show: false,
 		message: ""
 	})
+
+	// After a user has logged in, ping the server to update online status
+	// Interval runs every 5 seconds
 	useEffect(()=>{
 		if (userContext.loggedIn){
 
@@ -33,6 +40,7 @@ function LoginWindow(){
 					userId: userContext.userId,
 				})
 			}, 5000)
+			// Required so multiple intervals are not made
 			return ()=>clearInterval(interval);
 		}
 	})
@@ -66,8 +74,9 @@ function LoginWindow(){
 		// Request user information. Will proceed to .then() only if passport returns
 		// a successful value
 		axios.post("/api/user", login).then((response) => {
+			// If login is successful, make a public keypair.
+			// Public key is sent to the server. Private key is stored in in a context variable
 			rsa.generateKeyPair({bits: 2048}, (err, keypair)=>{
-				// This is stupid. THis is SO stupid but it's the only way I can reverse engineer the RSA code
 				axios.post("/api/publicKey", {userId: response.data.userId, publicKey: keypair.publicKey}).then(()=>{})
 				setUserContext({ type: "key", data: keypair.privateKey })
 			})
@@ -115,18 +124,18 @@ function LoginWindow(){
 		// If response does not contain an error,
 		// update userContext
 		// else return an error
-		// Signup does not make calls to get notes or categories 
-		// because reasonably, new users do not have any
 		axios.post("/api/newUser", login).then((response)=>{
 			if(!response.data.errors){
+				// Like in login, make a keypiar and store them aprropriately
 				rsa.generateKeyPair({ bits: 2048 }, (err, keypair) => {
-					// This is stupid. THis is SO stupid but it's the only way I can reverse engineer the RSA code
 					axios.post("/api/publicKey", { userId: response.data.userId, publicKey: keypair.publicKey }).then(() => {})
 					setUserContext({type: "key", data: keypair.privateKey})
 				})
+				// store data and close login window
 				setUserContext({type: "login", data: response.data});
 				setLogin({ type: "close" });
 			}else{
+				// alert for failure
 				setTimeout(closeAlert, 5000);
 				setAlert({
 					show: true,
@@ -135,9 +144,11 @@ function LoginWindow(){
 			}
 		}).catch((err)=>{});
 	};
+	// Closes the failed login alert
 	const closeAlert = () => {
 		setAlert({ show: false, message: "" })
 	}
+
 	return (
 		// If loginPage is true, create the loginForm component
 		// and pass the login methods to it

@@ -1,6 +1,14 @@
 /**
  * Context file that stores data on the message component
  * 
+ * to: the user data of the contact the message is for. 
+ * 	Contains all the fields that a Users object in ContactListContext would have
+ * newMessage: The message in the text field
+ * messages: an array of previous messages made or received. Each message has the following fields:
+ * 		senderId: userId of the sender
+ * 		receiverId: userId of the recipient
+ * 		message: The actual message in plaintext
+ * 
  */
 
 import React, { useReducer, useContext, createContext } from "react";
@@ -25,7 +33,7 @@ const reducer = (state, action) => {
 
 		}
 		case "updateTo":{
-			return ({ ...state, newMessage: "", to: action.data, index:action.index });
+			return ({ ...state, newMessage: "", to: action.data});
 
 		}
 		case "resetMessage":{
@@ -44,7 +52,6 @@ const MessageProvider = ({ value = [], ...props }) => {
 		to: "",
 		newMessage:"",
 		messages:[],
-		index: ""
 	});
 	return <Provider value={[state, dispatch]}{...props} />;
 };
