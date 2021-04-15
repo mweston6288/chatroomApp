@@ -7,7 +7,6 @@ import React, {useState} from "react";
 import InputGroup from "react-bootstrap/InputGroup";
 import FormControl from "react-bootstrap/FormControl";
 import Button from "react-bootstrap/Button";
-import { useSearchContext } from "../../utils/SearchContext";
 import { useContactListContext } from "../../utils/ContactListContext";
 import {useUserContext} from "../../utils/UserContext"
 import axios from "axios";

@@ -98,7 +98,7 @@ function MessageField() {
 					})
 				})
 			}
-		}, 5000)
+		}, 500)
 		return ()=> clearInterval(interval)
 	})
 

@@ -7,7 +7,6 @@ import MessageField from "./components/Message/MessageField"
 import ContactList from "./components/Search/ContactList"
 import { UserProvider } from "./utils/UserContext";
 import { LoginProvider } from "./utils/LoginContext";
-import { SearchProvider } from "./utils/SearchContext";
 import { MessageProvider } from "./utils/MessageContext";
 import { ContactListProvider } from "./utils/ContactListContext";
 
@@ -17,7 +16,6 @@ function App() {
     <>
       <UserProvider>
         <LoginProvider>
-          <SearchProvider>
             <MessageProvider>
               <ContactListProvider>
               <Container>
@@ -34,7 +32,6 @@ function App() {
               <LoginWindow />
               </ContactListProvider>
             </MessageProvider>
-          </SearchProvider>
         </LoginProvider>
       </UserProvider>
       
